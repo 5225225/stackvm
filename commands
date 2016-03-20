@@ -1,0 +1,44 @@
+ADD
+    PUSH x;
+    PUSH y;
+    ADD;
+
+    add to stack (x + y)
+
+Ditto for other operators
+
+
+JEQ
+    PUSH x;
+    PUSH y;
+    PUSH z;
+    JEQ;
+
+    if x == y
+        goto z
+
+GOTO
+    PUSH x;
+
+    goto x
+
+PRINT
+    PUSH x;
+    PRINT;
+
+    print(x)
+
+INPUT;
+    INPUT;
+
+    add to stack (input())
+
+CAST;
+
+    PUSH object;
+    PUSH datatype;
+    CAST;
+
+    add to stack (Convert object -> datatype)
+
+

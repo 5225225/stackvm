@@ -1,0 +1,67 @@
+PUSH 0;
+
+:begin;
+
+PUSH 1;
+ADD;
+
+
+DUPE;
+PUSH 101;
+PUSH @str halt;
+JEQ;
+
+DUPE;
+PUSH 15;
+MOD;
+PUSH 0;
+PUSH @str fizzbuzz;
+JEQ;
+
+DUPE;
+PUSH 3;
+MOD;
+PUSH 0;
+PUSH @str fizz;
+JEQ;
+
+DUPE;
+PUSH 5;
+MOD;
+PUSH 0;
+PUSH @str buzz;
+JEQ;
+
+
+PUSH @str none;
+GOTO;
+
+:fizz;
+PUSH @str Fizz;
+PRINT;
+
+PUSH @str begin;
+GOTO;
+
+:buzz;
+PUSH @str Buzz;
+PRINT;
+
+PUSH @str begin;
+GOTO;
+
+:fizzbuzz;
+PUSH @str FizzBuzz;
+PRINT;
+
+PUSH @str begin;
+GOTO;
+
+:none;
+DUPE;
+PRINT;
+
+PUSH @str begin;
+GOTO;
+
+:halt;
