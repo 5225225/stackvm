@@ -117,9 +117,11 @@ def execute(cmd):
         sys.exit(0)
             
 if len(sys.argv) > 1:
-    lex = shlex.shlex(open(sys.argv[1]) ,posix=True)
+    lex = shlex.shlex(open(sys.argv[1]), posix=True)
 else:
     lex = shlex.shlex(posix=True)
+
+lex.source = "include"
 
 cmds = []
 linetoindex = {}
