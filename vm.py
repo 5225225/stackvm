@@ -18,9 +18,12 @@ class opcode(Enum):
     CAST = 11
     DUPE = 12
     HLT = 13;
+    CALL = 14;
+    DUMP = 15;
 
 
 class dtype(Enum):
+    UNDEF = 0
     INT = 1
     STR = 2
 
@@ -32,11 +35,19 @@ class command:
     def __repr__(self):
         return "command({}, {})".format(self.op, self.operands)
 
-def convert_to(obj, dt):
+def convert_to(obj, dt=dtype.UNDEF):
     if dt == dtype.INT:
         return int(obj)
     if dt == dtype.STR:
         return str(obj)
+
+    try:
+        obj = int(obj)
+    except ValueError:
+        obj = str(obj)
+
+    return obj
+
 
 def execute(cmd):
     global increment
@@ -46,7 +57,7 @@ def execute(cmd):
 
     if cmd.op == opcode.PUSH:
         offset = 0
-        datatype = dtype.INT
+        datatype = dtype.UNDEF
         if cmd.operands[0] == "@":
             datatype = dtype[cmd.operands[1].upper()]
             offset = 2
@@ -115,6 +126,19 @@ def execute(cmd):
 
     if cmd.op == opcode.HLT:
         sys.exit(0)
+
+    if cmd.op == opcode.CALL:
+        linetoindex["caller"] = ptr + 1
+        if len(cmd.operands) > 1:
+            execute(command("PUSH", cmd.operands[:-1]))
+
+        ptr = linetoindex[cmd.operands[-1]]-1
+
+    if cmd.op == opcode.DUMP:
+        print("\n=== Dumping stack contents ===")
+        for index, item in enumerate(stack):
+            print("{}\t{} {}".format(index, str(type(item)), item))
+
             
 if len(sys.argv) > 1:
     lex = shlex.shlex(open(sys.argv[1]), posix=True)
@@ -122,6 +146,8 @@ else:
     lex = shlex.shlex(posix=True)
 
 lex.source = "include"
+lex.wordchars = lex.wordchars
+lex.commenters = "//"
 
 cmds = []
 linetoindex = {}
@@ -131,6 +157,12 @@ while True:
     linenum = lex.lineno
     if cmd is None:
         break
+
+    print(cmd)
+    if cmd == "/*":
+        while cmd != "*/":
+            cmd = lex.get_token()
+        cmd = lex.get_token()
 
     args = [lex.get_token()]
     if args[0] is not None:
@@ -158,6 +190,3 @@ while True:
         ptr += 1
 
 
-print("\n=== Dumping stack contents ===")
-for index, item in enumerate(stack):
-    print("{}\t{} {}".format(index, str(type(item)), item))

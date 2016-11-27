@@ -1,44 +1,84 @@
+Whitespace is generally ignored
+
+Every item in a program is either
+    * Literal string
+        Uses quotes.
+        Handles escapes (\n, \xb3)
+
+    * Literal number
+        No quotes.
+        Can start with either 0b (binary), 0x (hex), 0o (octal).
+
+    * Instruction
+        Uppercase, always.
+        Anything that is entirely uppercase is assumed to be an instruction
+
+
+Strings have escapes handled and then are pushed onto the stack.
+
+Numbers are converted to an integer and then are pushed onto the stack.
+
+Instructions are pushed onto the stack.
+
+Anything unrecognised will cause the program to exit immediately.
+
+== Limits ==
+
+Max length of strings must be at least 255
+Integers on the stack must be at least int32_t. Do not rely on this to be the case, however.
+
+Memory addresses (GETMEM, SETMEM) must be 1 byte. Wrapping must be done.
+
+
+== INSTRUCTIONS ==
+
 ADD
-    PUSH x;
-    PUSH y;
-    ADD;
+    y = pop()
+    x = pop()
+    push(x + y)
 
-    add to stack (x + y)
+    (Strictly speaking it doesn't matter for addition, but arguments are always "reversed".
+        This is because the stack reverses them, so something like `5 3 SUB` would be -2 
+        if we don't reverse the arguments)
+SUB
+    y = pop()
+    x = pop()
+    push(x - y)
 
-Ditto for other operators
+MULT
+    y = pop()
+    x = pop()
+    push(x * y)
+
+DIV
+    y = pop()
+    x = pop()
+    push(x / y)
 
 
-JEQ
-    PUSH x;
-    PUSH y;
-    PUSH z;
-    JEQ;
+RROT
+    n = pop()
+    Do a right rotate of the top n items
 
-    if x == y
-        goto z
-
-GOTO
-    PUSH x;
-
-    goto x
+LROT
+    n = pop()
+    Do a left rotate of the top n items
 
 PRINT
-    PUSH x;
-    PRINT;
-
+    x = pop()
     print(x)
 
-INPUT;
-    INPUT;
+GETMEM
+    addr = pop()
+    push(mem[addr])
 
-    add to stack (input())
+    Reads from the memory array.
 
-CAST;
+SETMEM
+    addr = pop()
+    val = pop()
+    mem[addr] = val mod 256
 
-    PUSH object;
-    PUSH datatype;
-    CAST;
-
-    add to stack (Convert object -> datatype)
+    Writes to the memory array.
 
 

@@ -1,0 +1,94 @@
+:shortstore
+    #Input: <addr> <16 bit value>
+    DUP
+    256 MOD
+    2 RROT
+    256 DIV
+    3 RROT
+    DUP
+    4 LROT
+    2 LROT
+    SETMEM
+
+    2 LROT
+    1 ADD
+    2 LROT
+    SETMEM
+
+    RETURN
+
+:longstore
+    DUP
+    65536 MOD
+    2 RROT
+    65536 DIV
+    3 RROT
+    DUP
+    4 LROT
+    2 LROT
+    .shortstore CALL
+
+    2 LROT
+    2 ADD
+    2 LROT
+    .shortstore CALL
+
+    RETURN
+
+:longlongstore
+    DUP
+    4294967296 MOD
+    2 RROT
+    4294967296 DIV
+    3 RROT
+    DUP
+    4 LROT
+    2 LROT
+    .longstore CALL
+
+    2 LROT
+    4 ADD
+    2 LROT
+    .longstore CALL
+
+    RETURN
+
+:shortload
+    DUP         # Duplicate the input (Memory address)
+    GETMEM      # Get the high order memory address, push to stack
+    256 MULT    # Multiply it by 256
+    SWAP        # Get the memory address on the bottom of the stack
+    1 ADD       # Increment by 1
+    GETMEM      # Get the low order memory address
+    ADD         # Add them. Bitwise OR would work too, since they don't overlap.
+
+    RETURN      
+
+:longload
+    DUP             # Duplicate the input (Memory address)
+    .shortload CALL # Get the high order memory address, push to stack
+    65536 MULT      # Multiply it by 65536. (Shift left 16 bits)
+    SWAP            # Get the memory address on the bottom of the stack
+    2 ADD           # Increment by 1
+    .shortload CALL # Get the low order memory address
+    ADD             # Add them. Bitwise OR would work too, since they don't overlap.
+
+    RETURN      
+
+:longlongload
+    # Input: <address>
+    # Output: 8 byte value starting at that address
+    #
+    # Loads a 8 byte number, starting at the specified address.
+
+    DUP             # Duplicate the input (Memory address)
+    .longload CALL  # Get the high order memory address, push to stack
+    4294967296 MULT # Multiply it by 4294967296. (Shift left 32 bits)
+    SWAP            # Get the memory address on the bottom of the stack
+    2 ADD           # Increment by 1
+    .longload  CALL # Get the low order memory address
+    ADD             # Add them. Bitwise OR would work too, since they don't overlap.
+
+    RETURN      
+
+

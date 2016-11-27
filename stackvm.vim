@@ -1,1 +1,0 @@
-/home/jack/.config/vim/syntax/stackvm.vim

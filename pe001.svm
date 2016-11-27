@@ -1,0 +1,10 @@
+.start JUMP
+
+    include(memproc)
+    include(strproc)
+
+:start
+
+0 3735928559 .longstore CALL
+
+DEBUG

@@ -1,0 +1,14 @@
+:input
+    2 LROT
+    65500 2 LROT .shortstore CALL
+    :strproc_start
+        GETCHAR DUP
+        10 .strproc_out JEQ
+
+        DROP
+    .strproc_start JUMP
+    :strproc_out
+
+    DEBUG
+
+    JUMP
